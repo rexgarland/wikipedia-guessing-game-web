@@ -9,12 +9,16 @@ app.get('/', (req, res) => {
   res.redirect('/123')
 })
 
+const digits = '0123456789'
+const isValidSeed = seed => [...seed].reduce((a,v) => a*(digits.includes(v)), true)
+
 app.get('/:seed', (req, res) => {
-  // prevent sql injection
-  req.params.seed
-  res.render('index.ejs', {
-    seed: req.params.seed
-  })
+  const seed = req.params.seed
+  if (isValidSeed(seed)) {
+    res.render('index.ejs', {seed})
+  } else {
+    res.redirect('/');
+  }
 })
 
 app.listen(port, () => {
