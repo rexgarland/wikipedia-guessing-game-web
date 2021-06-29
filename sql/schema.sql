@@ -6,7 +6,7 @@ CREATE TABLE link(
 
 CREATE TABLE game(
 	id integer primary key autoincrement,
-	seed integer unique default (random()), 
+	seed integer unique default (ABS(RANDOM() % 1000000)), 
 	date_created text default CURRENT_TIMESTAMP, 
 	num_visits integer default 0
 );

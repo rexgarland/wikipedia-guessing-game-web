@@ -1,11 +1,33 @@
+body {
+	box-sizing: border-box;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
 #title {
 	text-align: center;
 }
 
 #instructions {
+	flex-grow: 1;
+	box-sizing: border-box;
+}
+
+#instructions-box {
+	box-sizing: border-box;
 	border: 1px solid gainsboro;
 	max-width: 400px;
-	margin: auto;
+	margin: 10px;
+	margin-top: 0px;
 	padding: 10px;
 }
 
@@ -13,7 +35,58 @@
 	margin: 10px;
 }
 
-#instructions > button {
+#instructions-box > button {
 	display: block;
 	margin: auto;
+}
+
+#game {
+	display: none;
+	flex-grow: 1;
+	width: 100vw;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: stretch;
+}
+
+@media (max-aspect-ratio: 3/2) {
+	#game {
+		flex-direction: column;
+	}
+}
+
+#sentence {
+	flex: 1.6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	font-size: large;
+}
+
+#choices {
+	flex: 1;
+}
+
+#choices {
+	list-style: none;
+	padding: 10px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin: 0;
+}
+
+#choices > li {
+    flex-grow: 1;
+    border: 1px solid;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 10px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

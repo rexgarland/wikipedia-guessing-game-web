@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:public": "mkdir -p dist && cp public/* dist/"
+    "build:public": "mkdir -p dist && cp public/* dist/",
+    "start": "node express/serve.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.25.1",
     "datasource-sql": "^1.4.1",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
     "graphql": "^15.5.1",
     "sqlite3": "^5.0.2"
   }

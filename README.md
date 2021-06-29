@@ -5,7 +5,7 @@ This is the web version of a wikipedia guessing game.
 ## Run
 
 ```shell
-node serve.js
+npm start
 ```
 
 ## Test
