@@ -1,0 +1,23 @@
+{
+	"wrong_sentence_substrings": {
+		"https://en.wikipedia.org/wiki/Toaripi_language": ". You can help Wikipedia by",
+		"https://en.wikipedia.org/wiki/Mangifera_dongnaiensis": "You can help Wikipedia by",
+		"https://en.wikipedia.org/wiki/Pipe_Dreams_(Potluck_album)": "and more. The",
+		"https://en.wikipedia.org/wiki/Th%C3%A9odore_Baribeau": "poor health. He",
+		"https://en.wikipedia.org/wiki/Laratinga_Wetlands": "35°04′17″S"
+	},
+	"wrong_sentence_beginnings": {
+		"https://en.wikipedia.org/wiki/Kenepuru": "is",
+		"https://en.wikipedia.org/wiki/Park_Kyu-seon": ",",
+		"https://en.wikipedia.org/wiki/Cheoah_Dam": ".",
+		"https://en.wikipedia.org/wiki/Horley": "changed",
+		"https://en.wikipedia.org/wiki/Selva_Magal": ")",
+		"https://en.wikipedia.org/wiki/Coos_Bay_Wagon_Road_Lands": "§",
+		"https://en.wikipedia.org/wiki/Mogra_Kalan": "Coordinates:"
+	},
+	"small_sentence_lengths": {
+		"https://en.wikipedia.org/wiki/Mr._Gay_Canada": 20,
+		"https://en.wikipedia.org/wiki/List_of_Cleveland_Indians_owners_and_executives": 10,
+		"https://en.wikipedia.org/wiki/Sri_Raya_MRT_station": 50
+	}
+}

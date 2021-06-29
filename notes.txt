@@ -1,0 +1,4 @@
+* decent player will reach a score of ~50 per game (that's 200 links)
+* want probability of seeing a repeat link to be < 10%
+* P(see no repeat) = N!/((N-k)!*N**k), where k is the number of links visited and N is the size of the database
+* N > 2e5 links should be sufficient

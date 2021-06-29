@@ -1,0 +1,1 @@
+1. Because there are so many edge cases, I just test things web scraper should *not* do. For example, if I see a bug where the scraper gives me a sentence from wikipedia from it's footer (i.e. "Wikipedia is a ..."), then I store that as a negative example, fix the bug, and test to make sure that the scraper doesn't do that again on that specific url.

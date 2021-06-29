@@ -1,0 +1,17 @@
+{
+  "name": "wikipedia-guessing-game-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:public": "mkdir -p dist && cp public/* dist/"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.25.1",
+    "datasource-sql": "^1.4.1",
+    "graphql": "^15.5.1",
+    "sqlite3": "^5.0.2"
+  }
+}
