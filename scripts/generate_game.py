@@ -34,6 +34,9 @@ TERMINALS = '.!?'
 SPACES = ' \t'
 SENTENCE_START = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+def switch(var):
+    return lambda x: var==x
+
 def split_paragraph_reducer(a,v):
     """
     Reducer on a paragraph (string of characters).
@@ -46,24 +49,24 @@ def split_paragraph_reducer(a,v):
     """
     if not a:
         return v in TERMINALS, False, [v]
+
     last_was_terminal, ready_for_next, previous = a
 
     x = v in TERMINALS
 
     if last_was_terminal:
         z = previous[:-1]+[previous[-1]+v]
-        if v in SPACES:
-            y = True
-        else:
-            y = ready_for_next
+        y = v in SPACES
     else:
-        y = False
         if ready_for_next:
             if v in SENTENCE_START:
+                y = False
                 z = previous+[v]
             else:
+                y = v in SPACES
                 z = previous[:-1]+[previous[-1]+v]
         else:
+            y = False
             z = previous[:-1]+[previous[-1]+v]
 
     return x, y, z
@@ -232,4 +235,4 @@ def loop():
         print(string[:160])
 
 if __name__=='__main__':
-    
+    main()

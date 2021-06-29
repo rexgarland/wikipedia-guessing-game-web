@@ -74,9 +74,9 @@ class TestUtils(unittest.TestCase):
         expected = ['Mr. John Johnson Jr. was born in the U.S.A but earned his Ph.D. in Israel before joining Nike Inc. as an engineer.', 'He also worked at craigslist.org as a business analyst.']
         self.assertEqual(sentence_split(string), expected)
 
-        # string = "Daam is an archaic nickname for Adam.[1] Variant forms are Daamen, Daams, Daemen, Daems, and Dame."
-        # expected = ["Daam is an archaic nickname for Adam.[1]", "Variant forms are Daamen, Daams, Daemen, Daems, and Dame."]
-        # self.assertEqual(sentence_split(string), expected)
+        string = "This is a sentence.  Another one."
+        expected = ["This is a sentence.","Another one."]
+        self.assertEqual(sentence_split(string), expected)
 
 if __name__=='__main__':
     unittest.main()
