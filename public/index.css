@@ -1,0 +1,19 @@
+#title {
+	text-align: center;
+}
+
+#instructions {
+	border: 1px solid gainsboro;
+	max-width: 400px;
+	margin: auto;
+	padding: 10px;
+}
+
+#instruction-title {
+	margin: 10px;
+}
+
+#instructions > button {
+	display: block;
+	margin: auto;
+}

@@ -41,8 +41,9 @@ def split_paragraph_reducer(a,v):
     """
     Reducer on a paragraph (string of characters).
 
-    Processes a list of characters and groups them into a list of sentences, as best it can.
-    By no means perfect, this is a fast way to get 95% of the way there.
+    Processes a list of characters and groups them into sentences. 
+
+    It's not great, but it's fine.
 
     Returns a list of sentences, using the state (in English): 
             ("the last character I saw was a terminal character", "")
@@ -56,7 +57,7 @@ def split_paragraph_reducer(a,v):
 
     if last_was_terminal:
         z = previous[:-1]+[previous[-1]+v]
-        y = v in SPACES
+        y = not (v in SENTENCE_START)
     else:
         if ready_for_next:
             if v in SENTENCE_START:
@@ -79,10 +80,11 @@ def ends_with_a_common_prefix_abbreviation(s):
             return True
     return False
 
-def split_paragraph(paragraph):
-    if not paragraph:
+def sentence_split(string):
+    """Split text into its sentences"""
+    if not string:
         return []
-    _, _, out = reduce(split_paragraph_reducer, paragraph, [])
+    _, _, out = reduce(split_paragraph_reducer, string, [])
     sentences = [s.strip() for s in out if s.strip()]
 
     # if a sentences ends in a common prefixed abbreviation, elide it to the right when possible
@@ -91,11 +93,6 @@ def split_paragraph(paragraph):
     sentences = reduce(left_elision_reducer(ends_with_a_common_prefix_abbreviation), sentences[::-1], [])[::-1]
 
     return sentences
-
-def sentence_split(string):
-    # TODO: look up what I did for vreader and just use that
-    # return split_and_append_by('.')(string)
-    return split_paragraph(string)
 
 def newline_split(string):
     return [a.strip() for a in string.split('\n') if a.strip()]
@@ -179,12 +176,14 @@ def get_sentence_from_html(text):
 
     return sentence
 
+NUM_LEVELS = 200
+
 def main():
 
     # generate links and sentences for a full game
     links = {}
     choices = []
-    for i in tqdm(range(1,11)):
+    for i in tqdm(range(1,NUM_LEVELS+1)):
         # add three incorrect answers
         incorrect_urls = []
         for _ in range(3):
@@ -213,18 +212,30 @@ def main():
         })
         choices.extend(new_choices)
 
-    breakpoint()
-
     # populate the game data into the database
-    with sqlite3.connet('db.sqlite') as con:
+    with sqlite3.connect('db.sqlite') as con:
         cur = con.cursor()
 
-        # add all the links
-        cur.execute('INSERT INTO link ')
+        # add the new links
+        link_ids = {}
+        for url in links:
+            sentence = links[url]
+            # try to add a row
+            res = cur.execute('INSERT OR IGNORE INTO link(url) VALUES (?)', (url,))
+            if sentence:
+                # check if it already had a sentence
+                existing_sentence, = cur.execute('SELECT sentence FROM link WHERE url=?', (url,)).fetchone()
+                if not existing_sentence:
+                    cur.execute('INSERT OR REPLACE INTO link(url, sentence) VALUES (?,?)', (url, sentence))
 
         # make a row in the game table
         rowid = cur.execute('INSERT INTO game DEFAULT VALUES;').lastrowid
         game_id, seed, date_created, num_visits = cur.execute('SELECT * FROM game WHERE id=?', (rowid,)).fetchone()
+
+        # create choices
+        for choice in choices:
+            link_id, = cur.execute('SELECT id FROM link WHERE url=?', (choice['link'],)).fetchone()
+            cur.execute('INSERT INTO choice(game_id, level, link_id, is_answer) VALUES (?,?,?,?)', (game_id, choice['level'], link_id, choice['is_answer']))
 
 def loop():
     """A helper function for just checking out how the parser performs"""

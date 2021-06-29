@@ -58,25 +58,11 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(flatMap(fn)(x), expected)
 
     def test_sentence_split(self):
-        string = 'Hi, there. My name is Bob.'
-        expected = ['Hi, there.', 'My name is Bob.']
-        self.assertEqual(sentence_split(string), expected)
-
-        string = 'Guess what? I have a Ph.D in gaming from the U.S. military.'
-        expected = ['Guess what?', 'I have a Ph.D in gaming from the U.S. military.']
-        self.assertEqual(sentence_split(string), expected)
-
-        string = 'Mr. Gay Canada is a television show. I like Mr. Gay Canada.'
-        expected = ['Mr. Gay Canada is a television show.', 'I like Mr. Gay Canada.']
-        self.assertEqual(sentence_split(string), expected)
-
-        string = 'Mr. John Johnson Jr. was born in the U.S.A but earned his Ph.D. in Israel before joining Nike Inc. as an engineer. He also worked at craigslist.org as a business analyst.'
-        expected = ['Mr. John Johnson Jr. was born in the U.S.A but earned his Ph.D. in Israel before joining Nike Inc. as an engineer.', 'He also worked at craigslist.org as a business analyst.']
-        self.assertEqual(sentence_split(string), expected)
-
-        string = "This is a sentence.  Another one."
-        expected = ["This is a sentence.","Another one."]
-        self.assertEqual(sentence_split(string), expected)
+        paragraphs = config['sentence_split_examples']
+        for paragraph in paragraphs:
+            with self.subTest(paragraph=paragraph):
+                expected = paragraphs[paragraph]
+                self.assertEqual(sentence_split(paragraph), expected)
 
 if __name__=='__main__':
     unittest.main()

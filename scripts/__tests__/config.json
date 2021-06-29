@@ -19,5 +19,13 @@
 		"https://en.wikipedia.org/wiki/Mr._Gay_Canada": 20,
 		"https://en.wikipedia.org/wiki/List_of_Cleveland_Indians_owners_and_executives": 10,
 		"https://en.wikipedia.org/wiki/Sri_Raya_MRT_station": 50
+	},
+	"sentence_split_examples": {
+		"Hi, there. My name is Bob.": ["Hi, there.", "My name is Bob."],
+		"Guess what? I have a Ph.D in gaming from the U.S. military.": ["Guess what?", "I have a Ph.D in gaming from the U.S. military."],
+		"Mr. Gay Canada is a television show. I like Mr. Gay Canada.": ["Mr. Gay Canada is a television show.", "I like Mr. Gay Canada."],
+		"Mr. John Johnson Jr. was born in the U.S.A but earned his Ph.D. in Israel before joining Nike Inc. as an engineer. He also worked at craigslist.org as a business analyst.": ["Mr. John Johnson Jr. was born in the U.S.A but earned his Ph.D. in Israel before joining Nike Inc. as an engineer.", "He also worked at craigslist.org as a business analyst."],
+		"This is a sentence.  Another one.": ["This is a sentence.","Another one."],
+		"This is a \"sentence.\" Another one.": ["This is a \"sentence.\"","Another one."]
 	}
 }
