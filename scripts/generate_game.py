@@ -6,6 +6,8 @@ from functools import reduce
 import numpy as np
 from tqdm import tqdm
 
+DATABASE = 'data.db'
+
 # I want to use this file as a script or part of a package, depending on the context
 if __name__=='__main__':
     from ORM import Link, Choice, Game
@@ -213,7 +215,7 @@ def main():
         choices.extend(new_choices)
 
     # populate the game data into the database
-    with sqlite3.connect('db.sqlite') as con:
+    with sqlite3.connect(DATABASE) as con:
         cur = con.cursor()
 
         # add the new links
