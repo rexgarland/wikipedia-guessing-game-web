@@ -25,8 +25,14 @@ app.get('/:seed', async (req, res) => {
   }
 })
 
-app.get('/data/:seed', (req, res) => {
-  res.send('tbd')
+app.get('/data/:seed', async (req, res) => {
+  const seed = req.params.seed
+  if (isValidSeed(seed) && await db.seedExists(seed)) {
+    const data = await db.getData(seed);
+    res.send(data)
+  } else {
+    res.render('invalid.ejs', {seed})
+  }
 })
 
 app.listen(port, () => {
