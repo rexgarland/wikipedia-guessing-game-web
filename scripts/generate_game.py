@@ -5,15 +5,13 @@ import random
 from functools import reduce
 import numpy as np
 from tqdm import tqdm
+from pathlib import Path
+__dir = Path(__file__).parent
 
-DATABASE = 'data.db'
+DATABASE = __dir / '../sqlite/data.db'
 
-# I want to use this file as a script or part of a package, depending on the context
-if __name__=='__main__':
-    from ORM import Link, Choice, Game
-else:
-    from .ORM import Link, Choice, Game
-    # for use in testing
+# testing repeatability
+if __name__!='__main__':
     random.seed(1)
 
 RANDOM_URL = "https://en.wikipedia.org/wiki/Special:Random"

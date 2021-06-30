@@ -5,15 +5,16 @@ const db = require('./db')
 
 const port = 3000
 
+const digits = '0123456789'
+const isValidSeed = seed => [...seed].reduce((a,v) => a*(digits.includes(v)), true)
+
 app.use(express.static('public'))
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.redirect('/916252')
+app.get('/', async (req, res) => {
+  const seed = await db.getRandomSeed();
+  res.redirect(`/${seed}`)
 })
-
-const digits = '0123456789'
-const isValidSeed = seed => [...seed].reduce((a,v) => a*(digits.includes(v)), true)
 
 app.get('/:seed', async (req, res) => {
   const seed = req.params.seed
@@ -25,7 +26,7 @@ app.get('/:seed', async (req, res) => {
 })
 
 app.get('/data/:seed', (req, res) => {
-
+  res.send('tbd')
 })
 
 app.listen(port, () => {

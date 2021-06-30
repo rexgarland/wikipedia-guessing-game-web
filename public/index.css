@@ -17,6 +17,11 @@ body {
 	text-align: center;
 }
 
+#lives {
+	display: none;
+	margin: auto;
+}
+
 #instructions {
 	flex-grow: 1;
 	box-sizing: border-box;
