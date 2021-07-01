@@ -32,25 +32,18 @@ async function getIdFromSeed(seed) {
   return rows[0].id;
 }
 
-// package rows from the |choice| table in a friendly json format
-async function packageChoices(rows) {
-  // collect the link ids
-  const ids = rows.map(r => r.link_id);
-  const uniqueIds = [...new Set(items)];
-  // map the ids to links
-  // fill levels [{choices:[{url, is_answer}], sentence}]
-  return {data: levels}
-}
-
 async function getData(seed) {
   // get the game id
   const game_id = await getIdFromSeed(seed);
   // get pertaining rows
   const rows = await knex('choice')
-    .select('level', 'link_id', 'is_answer')
-    .whereRaw('game_id=?', [game_id]);
-  // package into json
-  return await packageChoices(rows);
+    .join('link', 'choice.link_id', 'link.id')
+    .groupBy('level')
+    .select(knex.raw('group_concat(sentence) as sentence, group_concat(url," ") as urls, group_concat(case when is_answer=1 then url else "" end,"") as answer'));
+  return rows.map(row => ({
+      ...row,
+      urls: row.urls.split(' ')
+    }));
 }
 
 module.exports = {
