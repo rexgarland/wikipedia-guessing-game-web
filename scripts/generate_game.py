@@ -120,6 +120,9 @@ def get_sentence(url):
     page = requests.get(url)
     return get_sentence_from_html(page.content)
 
+def none_to_string(string):
+    return string if string else ''
+
 def prune_if(condition):
     def p(tree):
         to_remove = []
@@ -127,6 +130,10 @@ def prune_if(condition):
             if condition(tree[i]):
                 to_remove.append(i)
         for i in to_remove[::-1]:
+            if i-1:
+                tree[i-1].tail = none_to_string(tree[i-1].tail) + none_to_string(tree[i].tail)
+            else:
+                tree.text = none_to_string(tree.text) + none_to_string(tree[i].tail)
             del tree[i]
         for child in tree:
             p(child)
@@ -158,6 +165,7 @@ def get_sentence_from_html(text):
     tree = html.fromstring(text)
     nodes = tree.xpath('//div[@class="mw-parser-output"]/p | //div[@class="mw-parser-output"]/ul | //div[@class="mw-parser-output"]/ol')
     # nodes = tree.xpath('//div[@class="mw-parser-output"]/p')
+    breakpoint()
     prune_nontext(nodes)
     prune_coordinates(nodes)
     strings = list(map(lambda n: html.tostring(n, method='text', encoding=str), nodes))
@@ -246,4 +254,5 @@ def loop():
         print(string[:160])
 
 if __name__=='__main__':
-    main()
+    url = "https://en.wikipedia.org/wiki/Proposition_(party)"
+    get_sentence(url)
