@@ -39,7 +39,8 @@ async function getData(seed) {
   const rows = await knex('choice')
     .join('link', 'choice.link_id', 'link.id')
     .groupBy('level')
-    .select(knex.raw('group_concat(sentence) as sentence, group_concat(url," ") as urls, group_concat(case when is_answer=1 then url else "" end,"") as answer'));
+    .select(knex.raw('group_concat(sentence) as sentence, group_concat(url," ") as urls, group_concat(case when is_answer=1 then url else "" end,"") as answer'))
+    .whereRaw('game_id=?',[game_id]);;
   return rows.map(row => ({
       ...row,
       urls: row.urls.split(' ')

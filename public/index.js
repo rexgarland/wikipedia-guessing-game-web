@@ -108,11 +108,6 @@ async function start() {
   game.style.display = "flex";
   status.style.display = "block";
 
-  let numLives = 3;
-  let turn = 1;
-
-  
-
   // get the game data from the server
   const data = await getGameData();
 
