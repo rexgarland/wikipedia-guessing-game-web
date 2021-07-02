@@ -63,6 +63,10 @@ function runGame(state) {
   sentence.innerHTML = '';
   choices.innerHTML = '';
 
+  // update status bar
+  turnNum.innerHTML = `${state.turn}`;
+  livesNum.innerHTML = `${state.lives}`;
+
   if (state.levels.length==0) {
     // ending is reached
     sentence.innerHTML = 'You finished the game... wow';
@@ -75,10 +79,6 @@ function runGame(state) {
 
   else {
     // in a turn
-
-    // update status bar
-    turnNum.innerHTML = `${state.turn}`;
-    livesNum.innerHTML = `${state.lives}`;
 
     // populate the turn
     const level = state.levels[0];
