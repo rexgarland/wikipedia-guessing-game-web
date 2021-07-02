@@ -118,7 +118,11 @@ def get_sentence(url):
     """
     # note: takes ~0.6 seconds
     page = requests.get(url)
-    return get_sentence_from_html(page.content)
+    try:
+        sentence = get_sentence_from_html(page.content)
+    except SentenceParsingError:
+        raise print(f'Not enough sentences found at url: "{url}"')
+    return sentence
 
 def none_to_string(string):
     return string if string else ''
@@ -155,6 +159,9 @@ def prune_coordinates(tree):
 def wordlen(sentence):
     return len([s for s in sentence.split(' ') if s.strip()])
 
+class SentenceParsingError(BaseException):
+    pass
+
 def get_sentence_from_html(text):
     """Return a random sentence from the given wikipedia page, with some common-sense filtering.
 
@@ -165,11 +172,13 @@ def get_sentence_from_html(text):
     tree = html.fromstring(text)
     nodes = tree.xpath('//div[@class="mw-parser-output"]/p | //div[@class="mw-parser-output"]/ul | //div[@class="mw-parser-output"]/ol')
     # nodes = tree.xpath('//div[@class="mw-parser-output"]/p')
-    breakpoint()
     prune_nontext(nodes)
     prune_coordinates(nodes)
     strings = list(map(lambda n: html.tostring(n, method='text', encoding=str), nodes))
     sentences = pipe_splitters(sentence_split, newline_split)(strings)
+
+    if not sentences:
+        raise SentenceParsingError('Not enough sentences found...')
 
     if len(sentences)<10:
         sentence = max(sentences, key=wordlen)
@@ -184,66 +193,50 @@ def get_sentence_from_html(text):
 
     return sentence
 
-NUM_LEVELS = 200
+NUM_LEVELS = 100
+NUM_TRIES = 3
 
 def main():
 
-    # generate links and sentences for a full game
-    links = {}
-    choices = []
-    for i in tqdm(range(1,NUM_LEVELS+1)):
-        # add three incorrect answers
-        incorrect_urls = []
-        for _ in range(3):
-            url = get_random_wikipedia_page()
-            incorrect_urls.append(url)
-            links.setdefault(url, None)
-        # add the answer url
-        answer_url = get_random_wikipedia_page()
-        if links.get(answer_url):
-            continue
-        sentence = get_sentence(answer_url)
-        links[answer_url] = sentence
-        # create the choice objects
-        new_choices = []
-        for url in incorrect_urls:
-            choice = {
-                'level': i,
-                'link': url,
-                'is_answer': False
-            }
-            new_choices.append(choice)
-        new_choices.append({
-            'level': i,
-            'link': answer_url,
-            'is_answer': True
-        })
-        choices.extend(new_choices)
-
-    # populate the game data into the database
     with sqlite3.connect(DATABASE) as con:
         cur = con.cursor()
 
-        # add the new links
-        link_ids = {}
-        for url in links:
-            sentence = links[url]
-            # try to add a row
-            res = cur.execute('INSERT OR IGNORE INTO link(url) VALUES (?)', (url,))
-            if sentence:
-                # check if it already had a sentence
-                existing_sentence, = cur.execute('SELECT sentence FROM link WHERE url=?', (url,)).fetchone()
-                if not existing_sentence:
-                    cur.execute('INSERT OR REPLACE INTO link(url, sentence) VALUES (?,?)', (url, sentence))
+        cur.execute('PRAGMA foreign_keys = ON;')
 
         # make a row in the game table
         rowid = cur.execute('INSERT INTO game DEFAULT VALUES;').lastrowid
         game_id, seed, date_created, num_visits = cur.execute('SELECT * FROM game WHERE id=?', (rowid,)).fetchone()
 
-        # create choices
-        for choice in choices:
-            link_id, = cur.execute('SELECT id FROM link WHERE url=?', (choice['link'],)).fetchone()
-            cur.execute('INSERT INTO choice(game_id, level, link_id, is_answer) VALUES (?,?,?,?)', (game_id, choice['level'], link_id, choice['is_answer']))
+        # loop over levels
+        for i in tqdm(range(1,NUM_LEVELS+1)):
+
+            # add three incorrect answers
+            incorrect_urls = [(get_random_wikipedia_page(),) for _ in range(3)]
+            cur.executemany('insert or ignore into link(url) values(?)', incorrect_urls)
+
+            # add the answer url
+            answer_url = get_random_wikipedia_page()
+            for _ in range(NUM_TRIES):
+                try:
+                    sentence = get_sentence(answer_url)
+                    break
+                except SentenceParsingError:
+                    print(f'Warning: Could not parse sentence from url: "{answer_url}"...')
+                    pass
+            cur.execute('insert or ignore into link(url) values(?)', (answer_url,))
+
+            # insert sentence
+            has_sentence, = cur.execute('select exists(select 1 from link where url=? and not (sentence is null))', (answer_url,)).fetchone()
+            if int(has_sentence)==0:
+                cur.execute('update link set sentence=? where url=?', (sentence, answer_url))
+
+            # create the choice objects
+            for url, in incorrect_urls:
+                linkid, = cur.execute('select id from link where url=?', (url,)).fetchone()
+                cur.execute('insert into choice(game_id, level, link_id, is_answer) values (?,?,?,?)', (game_id, i, linkid, 0))
+            # insert answer choice
+            linkid, = cur.execute('select id from link where url=?', (answer_url,)).fetchone()
+            cur.execute('insert into choice(game_id, level, link_id, is_answer) values (?,?,?,?)', (game_id, i, linkid, 1))
 
 def loop():
     """A helper function for just checking out how the parser performs"""
@@ -254,5 +247,4 @@ def loop():
         print(string[:160])
 
 if __name__=='__main__':
-    url = "https://en.wikipedia.org/wiki/Proposition_(party)"
-    get_sentence(url)
+    main()

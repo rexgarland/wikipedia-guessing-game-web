@@ -8,7 +8,8 @@ const knex = require('knex')({
     filename: dbfile
   },
   useNullAsDefault: true
-})
+});
+knex.raw('PRAGMA foreign_keys = ON;')
 
 async function seedExists(seed) {
   const rows = await knex('game')
@@ -47,8 +48,13 @@ async function getData(seed) {
     }));
 }
 
+async function incrementCount(seed) {
+  await knex.raw('UPDATE game SET num_visits = num_vists + 1 WHERE seed=?', [seed]);
+}
+
 module.exports = {
   seedExists,
   getRandomSeed,
-  getData
+  getData,
+  incrementCount
 }

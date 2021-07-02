@@ -20,6 +20,7 @@ app.get('/:seed', async (req, res) => {
   const seed = req.params.seed
   if (isValidSeed(seed) && await db.seedExists(seed)) {
     res.render('index.ejs', {seed})
+    await db.incrementCount(seed);
   } else {
     res.render('invalid.ejs', {seed})
   }
@@ -29,7 +30,7 @@ app.get('/data/:seed', async (req, res) => {
   const seed = req.params.seed
   if (isValidSeed(seed) && await db.seedExists(seed)) {
     const data = await db.getData(seed);
-    res.send(data)
+    res.send(data);
   } else {
     res.render('invalid.ejs', {seed})
   }
