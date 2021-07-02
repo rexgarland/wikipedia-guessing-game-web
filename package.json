@@ -6,7 +6,7 @@
   "scripts": {
     "build:public": "mkdir -p dist && cp public/* dist/",
     "debug": "onchange -i -k express/* public/* views/* -- npm run start",
-    "start": "node express/serve.js"
+    "start": "NODE_ENV=development node express/serve.js"
   },
   "author": "",
   "license": "ISC",

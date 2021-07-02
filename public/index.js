@@ -46,7 +46,7 @@ function shuffle(array) {
 function userChoice(levelData, onRight, onWrong) {
   const choiceItems = shuffle(levelData.urls).map(url => {
     const li = document.createElement('li')
-    li.innerHTML = `${url}`
+    li.innerHTML = `<div class="choice">${url}</div>`
     if (url==levelData.answer) {
       li.onclick = onRight;
     } else {

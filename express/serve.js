@@ -16,6 +16,20 @@ app.get('/', async (req, res) => {
   res.redirect(`/${seed}`)
 })
 
+if (process.env.NODE_ENV=='development') {
+  app.get('/test', (req, res) => {
+    res.render('test.ejs', {
+      urls: [
+        "https://en.wikipedia.org/wiki/2012_Wolverine%E2%80%93Hoosier_Athletic_Conference_Women%27s_Basketball_Tournament",
+        "https://en.wikipedia.org/wiki/Mazaces",
+        "https://en.wikipedia.org/wiki/Two_from_the_Vault",
+        "https://en.wikipedia.org/wiki/Khirapat"
+      ],
+      sentence: "Mazakes may have been nominated as satrap of Mesopotamia in reward for his submission, as coins in his name and in a style similar to his Egyptian predecessor Sabakes, are found in this region, and the satrap of Mesopotamia at that time is otherwise unknown."
+    })
+  })
+}
+
 app.get('/:seed', async (req, res) => {
   const seed = req.params.seed
   if (isValidSeed(seed) && await db.seedExists(seed)) {

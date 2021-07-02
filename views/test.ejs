@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A guessing game based on wikipedia pages" />
+    <meta name="game-seed" content="123456" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <style type="text/css">
+    .choice {
+      max-width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+  </style>
+  <body>
+    <h1 id="title">Wikipedia Guessing Game</h1>
+
+    <p id="status" style="display:block"><strong>Turn:</strong> <span id="turn-num">3</span> <strong>Lives:</strong> <span id="lives-num">2</span></p>
+
+    <div id="game" style="display:flex">
+      <div id="sentence"><%= sentence %></div>
+      <ul id="choices">
+        <% urls.forEach(function(url){ %>
+          <li><div class="choice"><%= url %></div></li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <!-- <script src="index.js"></script> -->
+  </body>
+</html>

@@ -95,4 +95,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+div.choice {
+  max-width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
 }

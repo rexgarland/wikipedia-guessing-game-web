@@ -49,7 +49,7 @@ async function getData(seed) {
 }
 
 async function incrementCount(seed) {
-  await knex.raw('UPDATE game SET num_visits = num_vists + 1 WHERE seed=?', [seed]);
+  await knex.raw('UPDATE game SET num_visits = num_visits + 1 WHERE seed=?', [seed]);
 }
 
 module.exports = {
