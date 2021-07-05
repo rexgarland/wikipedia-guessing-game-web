@@ -13,6 +13,7 @@ app.use(express.json())
 
 app.get('/', async (req, res) => {
   const seed = await db.getRandomSeed();
+  res.set('Cache-Control', 'no-store');
   res.render('index.ejs', {seed});
   await db.incrementCount(seed);
 })
