@@ -1,6 +1,7 @@
 # Wikipedia Guessing Game (web)
 
-This is the web version of a wikipedia guessing game.
+This is the web version of a wikipedia guessing game. You can find it here:
+[wikipedia-guessing-game.com](http://wikipedia-guessing-game.com/)
 
 ## Run
 
