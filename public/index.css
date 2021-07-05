@@ -114,6 +114,10 @@ body {
 	box-shadow: none;
 }
 
+.choice:hover {
+	cursor: pointer;
+}
+
 .choice-text {
   max-width: 100%;
   display: flex;
