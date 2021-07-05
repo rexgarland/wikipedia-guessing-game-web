@@ -4,6 +4,7 @@ import sqlite3
 import random
 from functools import reduce
 import numpy as np
+from tqdm import tqdm
 from multiprocessing import Pool
 import logging
 from pathlib import Path
@@ -216,11 +217,19 @@ def get_level_data(i):
         'sentence': sentence \
     }
 
-def main():
+def main(parallel=False):
 
-    # get wikipedia data in parallel
-    with Pool(10) as p:
-        levels = p.map(get_level_data, list(range(1,NUM_LEVELS+1)))
+    if parallel:
+        # get wikipedia data in parallel (to generate a one-off game)
+        # this takes about 10 seconds
+        with Pool(10) as p:
+            levels = p.map(get_level_data, list(range(1,NUM_LEVELS+1)))
+    else:
+        # in series is more friendly to wikipedia (if running the script in a loop)
+        # this takes about 100 seconds
+        levels = []
+        for i in tqdm(range(1,NUM_LEVELS+1)):
+            levels.append(get_level_data(i))
 
     with sqlite3.connect(DATABASE) as con:
 
@@ -266,5 +275,10 @@ def loop():
         string = f'{url}:\t{repr(sentence)}'
         print(string[:160])
 
-if __name__=='__main__':
-    main()
+if __name__=="__main__":
+    import argparse
+    parser = argparse.ArgumentParser('generate a game and add it to the database')
+    parser.add_argument('--parallel', action='store_true')
+    args = parser.parse_args()
+
+    main(parallel=args.parallel)
