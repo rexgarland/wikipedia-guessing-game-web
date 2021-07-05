@@ -4,9 +4,13 @@ import sqlite3
 import random
 from functools import reduce
 import numpy as np
-from tqdm import tqdm
+from multiprocessing import Pool
+import logging
 from pathlib import Path
+
 __dir = Path(__file__).parent
+
+logging.basicConfig(level=logging.ERROR)
 
 DATABASE = __dir / '../sqlite/data.db'
 
@@ -16,7 +20,7 @@ if __name__!='__main__':
 
 RANDOM_URL = "https://en.wikipedia.org/wiki/Special:Random"
 
-def get_random_wikipedia_page():
+def get_random_wikipedia_page(*args):
     # note: takes ~0.2 seconds
     response = requests.head(RANDOM_URL)
     url = response.headers.get('location')
@@ -120,8 +124,8 @@ def get_sentence(url):
     page = requests.get(url)
     try:
         sentence = get_sentence_from_html(page.content)
-    except SentenceParsingError:
-        raise print(f'Not enough sentences found at url: "{url}"')
+    except SentenceParsingError as e:
+        raise e
     return sentence
 
 def none_to_string(string):
@@ -175,7 +179,7 @@ def get_sentence_from_html(text):
     prune_nontext(nodes)
     prune_coordinates(nodes)
     strings = list(map(lambda n: html.tostring(n, method='text', encoding=str), nodes))
-    sentences = pipe_splitters(sentence_split, newline_split)(strings)
+    sentences = pipe_splitters(sentence_split, newline_split)(strings)[1:] # ignore the first one
 
     if not sentences:
         raise SentenceParsingError('Not enough sentences found...')
@@ -194,11 +198,32 @@ def get_sentence_from_html(text):
     return sentence
 
 NUM_LEVELS = 100
-NUM_TRIES = 3
+NUM_TRIES = 5
+
+def get_level_data(i):
+    incorrect_urls = [(get_random_wikipedia_page(),) for _ in range(3)]
+    for _ in range(NUM_TRIES):
+        answer_url = get_random_wikipedia_page()
+        try:
+            sentence = get_sentence(answer_url)
+            break
+        except SentenceParsingError:
+            logging.warning(f'Could not parse sentence from url: "{answer_url}"...')
+            pass
+    return {
+        'incorrect_urls': incorrect_urls, \
+        'answer_url': answer_url, \
+        'sentence': sentence \
+    }
 
 def main():
 
+    # get wikipedia data in parallel
+    with Pool(10) as p:
+        levels = p.map(get_level_data, list(range(1,NUM_LEVELS+1)))
+
     with sqlite3.connect(DATABASE) as con:
+
         cur = con.cursor()
 
         cur.execute('PRAGMA foreign_keys = ON;')
@@ -208,21 +233,16 @@ def main():
         game_id, seed, date_created, num_visits = cur.execute('SELECT * FROM game WHERE id=?', (rowid,)).fetchone()
 
         # loop over levels
-        for i in tqdm(range(1,NUM_LEVELS+1)):
+        for i in range(1,NUM_LEVELS+1):
+            level = levels[i-1]
+            incorrect_urls = level['incorrect_urls']
+            answer_url = level['answer_url']
+            sentence = level['sentence']
 
             # add three incorrect answers
-            incorrect_urls = [(get_random_wikipedia_page(),) for _ in range(3)]
             cur.executemany('insert or ignore into link(url) values(?)', incorrect_urls)
 
             # add the answer url
-            answer_url = get_random_wikipedia_page()
-            for _ in range(NUM_TRIES):
-                try:
-                    sentence = get_sentence(answer_url)
-                    break
-                except SentenceParsingError:
-                    print(f'Warning: Could not parse sentence from url: "{answer_url}"...')
-                    pass
             cur.execute('insert or ignore into link(url) values(?)', (answer_url,))
 
             # insert sentence

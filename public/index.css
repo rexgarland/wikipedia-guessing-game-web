@@ -15,7 +15,11 @@ body {
 
 #title {
 	text-align: center;
-	margin: 10px;
+	margin: 20px;
+}
+
+#title > a:visited {
+	color: black;
 }
 
 #seed {
@@ -38,7 +42,6 @@ body {
 	border: 1px solid gainsboro;
 	max-width: 400px;
 	margin: 10px;
-	margin-top: 0px;
 	padding: 10px;
 }
 
@@ -91,9 +94,9 @@ body {
 	margin: 0;
 }
 
-#choices > li {
+.choice {
     flex-grow: 1;
-    border: 1px solid;
+    border: 1px solid gray;
     box-sizing: border-box;
     width: 100%;
     border-radius: 10px;
@@ -103,9 +106,15 @@ body {
     align-items: center;
     padding-right: 10px;
     padding-left: 10px;
+    box-shadow: 0 2px #e0e0e0;
 }
 
-div.choice {
+.choice:active {
+	transform: translateY(3px);
+	box-shadow: none;
+}
+
+.choice-text {
   max-width: 100%;
   display: flex;
   justify-content: flex-end;

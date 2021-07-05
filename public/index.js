@@ -12,7 +12,6 @@ const sentence = document.getElementById("sentence");
 const choices = document.getElementById("choices");
 
 
-
 async function getGameData() {
   const data = await fetch(`/data/${seedNum}`).then(res => res.json());
   return data;
@@ -48,22 +47,55 @@ function shuffle(array) {
   return array;
 }
 
+const GREEN = "#ccf9b7";
+const RED = "#f7c3c3";
+
+let timer;
+
+const delay = fn => {
+  timer = setTimeout(() => {
+    fn()
+    clearTimeout(timer);
+  }, 1000);
+}
+
+const animateCorrect = li => callback => {
+  return () => {
+    li.style.background = GREEN;
+    delay(callback);
+  }
+}
+
+const animateIncorrect = liCorrect => li => callback => {
+  return () => {
+    liCorrect.style.background = GREEN;
+    li.style.background = RED;
+    delay(callback);
+  }
+}
+
 function userChoice(levelData, onRight, onWrong) {
+  let correctChoice;
   const choiceItems = shuffle(levelData.urls).map(url => {
-    const li = document.createElement('li')
-    li.innerHTML = `<div class="choice">${url}</div>`
+    const li = document.createElement('li');
+    li.className = "choice";
+    li.innerHTML = `<div class="choice-text">${url}</div>`
+    li.dataset.URL = url;
     if (url==levelData.answer) {
-      li.onclick = onRight;
-    } else {
-      li.onclick = onWrong;
+      correctChoice = li;
     }
     return li;
-  }).forEach(choiceElem => {
-    choices.appendChild(choiceElem);
+  });
+  correctChoice.onclick = animateCorrect(correctChoice)(onRight);
+  choiceItems.forEach(li => {
+    choices.appendChild(li);
+    if (li!==correctChoice) {
+      li.onclick = animateIncorrect(correctChoice)(li)(onWrong);
+    }
   });
 }
 
-function runGame(state) {
+function stepGame(state) {
   // start with a blank slate
   sentence.innerHTML = '';
   choices.innerHTML = '';
@@ -89,13 +121,13 @@ function runGame(state) {
     const level = state.levels[0];
     sentence.innerHTML = level.sentence;
 
-    const onRight = () => runGame({
+    const onRight = () => stepGame({
       ...state,
       turn: state.turn+1,
       levels: state.levels.slice(1)
     });
 
-    const onWrong = () => runGame({
+    const onWrong = () => stepGame({
       ...state,
       lives: state.lives-1,
       turn: state.turn+1,
@@ -123,6 +155,5 @@ async function start() {
     'lives': 3,
     'turn': 1
   }
-  console.log(state);
-  runGame(state);
+  stepGame(state);
 }

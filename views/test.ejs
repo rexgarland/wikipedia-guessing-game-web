@@ -7,14 +7,6 @@
     <meta name="game-seed" content="123456" />
     <link rel="stylesheet" href="index.css" />
   </head>
-  <style type="text/css">
-    .choice {
-      max-width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      overflow: hidden;
-    }
-  </style>
   <body>
     <h1 id="title">Wikipedia Guessing Game</h1>
 
@@ -24,7 +16,7 @@
       <div id="sentence"><%= sentence %></div>
       <ul id="choices">
         <% urls.forEach(function(url){ %>
-          <li><div class="choice"><%= url %></div></li>
+          <li class="choice"><div class="choice-text"><%= url %></div></li>
         <% }); %>
       </ul>
     </div>
