@@ -13,7 +13,8 @@ app.use(express.json())
 
 app.get('/', async (req, res) => {
   const seed = await db.getRandomSeed();
-  res.redirect(`/${seed}`)
+  res.render('index.ejs', {seed});
+  await db.incrementCount(seed);
 })
 
 if (process.env.NODE_ENV=='development') {
@@ -30,7 +31,7 @@ if (process.env.NODE_ENV=='development') {
   })
 }
 
-app.get('/:seed', async (req, res) => {
+app.get('/seed/:seed', async (req, res) => {
   const seed = req.params.seed
   if (isValidSeed(seed) && await db.seedExists(seed)) {
     res.render('index.ejs', {seed})

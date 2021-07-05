@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="A guessing game based on wikipedia pages" />
-    <meta name="game-seed" content="<%= seed %>" />
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <h1 id="title">Wikipedia Guessing Game</h1>
+    <h1 id="title"><a href="/">Wikipedia Guessing Game</a></h1>
+    <div id="seed">Seed: <a href="/seed/<%= seed %>"><span id="seed-num"><%= seed %></span></a></div>
 
     <p id="status"><strong>Turn:</strong> <span id="turn-num"></span> <strong>Lives:</strong> <span id="lives-num"></span></p>
 
@@ -30,6 +30,6 @@
       <ul id="choices"></ul>
     </div>
 
-    <script src="index.js"></script>
+    <script src="/index.js"></script>
   </body>
 </html>

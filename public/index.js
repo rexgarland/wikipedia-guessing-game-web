@@ -1,15 +1,20 @@
-const instructions = document.getElementById("instructions");
-const game = document.getElementById("game");
+const seed = document.getElementById("seed");
+const seedNum = document.getElementById("seed-num").innerHTML;
+
 const status = document.getElementById("status");
 const turnNum = document.getElementById("turn-num");
 const livesNum = document.getElementById("lives-num");
+
+const instructions = document.getElementById("instructions");
+
+const game = document.getElementById("game");
 const sentence = document.getElementById("sentence");
 const choices = document.getElementById("choices");
 
-const seed = document.head.querySelector("[name=game-seed]")?.content;
+
 
 async function getGameData() {
-  const data = await fetch(`/data/${seed}`).then(res => res.json());
+  const data = await fetch(`/data/${seedNum}`).then(res => res.json());
   return data;
 }
 
@@ -104,6 +109,7 @@ function runGame(state) {
 }
 
 async function start() {
+  seed.style.display = "block";
   instructions.style.display = "none";
   game.style.display = "flex";
   status.style.display = "block";
