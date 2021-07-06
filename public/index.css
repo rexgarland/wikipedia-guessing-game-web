@@ -63,35 +63,41 @@ body {
 	align-items: stretch;
 }
 
-@media (max-aspect-ratio: 3/2) {
-	#game {
-		flex-direction: column;
-	}
-}
-
 #sentence {
-	flex: 1.6;
+	width: 50%;
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	padding: 2em;
-
 	font-size: large;
 }
 
 #choices {
-	flex: 1;
-}
-
-#choices {
+	width: 50%;
 	list-style: none;
 	padding: 10px;
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 100%;
 	margin: 0;
+}
+
+@media (max-aspect-ratio: 3/2) {
+	#game {
+		flex-direction: column;
+	}
+
+	#sentence {
+		height: 50%;
+		width: auto;
+	}
+
+	#choices {
+		height: 50%;
+		width: auto;
+	}
 }
 
 .choice {
