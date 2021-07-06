@@ -35,7 +35,7 @@ if (process.env.NODE_ENV=='development') {
 app.get('/seed/:seed', async (req, res) => {
   const seed = req.params.seed
   if (isValidSeed(seed) && await db.seedExists(seed)) {
-    res.render('index.ejs', {seed})
+    res.render('seed.ejs', {seed, message: `You are playing a permalink to seed `})
     await db.incrementCount(seed);
   } else {
     res.render('invalid.ejs', {seed})
