@@ -43,6 +43,7 @@ app.get('/seed/:seed', async (req, res) => {
 })
 
 app.get('/data/:seed', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
   const seed = req.params.seed
   if (isValidSeed(seed) && await db.seedExists(seed)) {
     const data = await db.getData(seed);

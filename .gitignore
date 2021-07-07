@@ -1,3 +1,4 @@
 dist/
 node_modules/
 .pytest_cache/
+run.sh
